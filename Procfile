@@ -1,1 +1,1 @@
-web: python pothole.py
+web: gunicorn pothole:app
