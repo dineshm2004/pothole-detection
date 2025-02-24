@@ -1,4 +1,4 @@
-requests
-pynmea2
 flask
 gunicorn
+requests
+pynmea2

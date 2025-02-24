@@ -24,8 +24,8 @@
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Load pothole data
-    fetch('pothole_data.json')
+    // Load pothole data from Flask API
+    fetch('/data')
         .then(response => response.json())
         .then(data => {
             console.log("✅ Loaded JSON:", data); // Debugging output
