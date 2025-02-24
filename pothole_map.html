@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pothole Detection Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<h2>Pothole Detection Map</h2>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // Initialize the map (default view)
+    var map = L.map('map').setView([0, 0], 2);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Load pothole data
+    fetch('pothole_data.json')
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ Loaded JSON:", data); // Debugging output
+            
+            if (data.length === 0) {
+                console.warn("⚠️ No pothole data found!");
+                return;
+            }
+
+            let bounds = [];
+
+            data.forEach(loc => {
+                if (typeof loc.lat === 'number' && typeof loc.lon === 'number') {
+                    let marker = L.marker([loc.lat, loc.lon])
+                        .addTo(map)
+                        .bindPopup(`
+                            <b>Pothole Detected!</b><br>
+                            Distance 1: ${loc.distances[0]} cm<br>
+                            Distance 2: ${loc.distances[1]} cm<br>
+                            Distance 3: ${loc.distances[2]} cm
+                        `);
+                    
+                    bounds.push([loc.lat, loc.lon]);
+                } else {
+                    console.error("❌ Invalid location data:", loc);
+                }
+            });
+
+            // Automatically zoom to fit all pothole locations
+            if (bounds.length > 0) {
+                map.fitBounds(bounds);
+            }
+        })
+        .catch(error => console.error('❌ Error loading JSON:', error));
+</script>
+
+</body>
+</html>

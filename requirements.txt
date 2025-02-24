@@ -1,0 +1,4 @@
+requests
+pynmea2
+flask
+gunicorn
